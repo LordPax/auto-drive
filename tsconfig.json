@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "declaration": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outDir": "build/",
+        "target": "es2019",
+        "strict": false,
+        "lib": [
+            "es5",
+            "dom"
+        ],
+    },
+    "include": [
+        "main.ts",
+        "src/canvas.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "build"
+    ]
+}
