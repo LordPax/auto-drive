@@ -4,6 +4,14 @@
     "description": "réseau de neurone apprend à conduire",
     "main": "build/main.js",
     "types": "build/main.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LordPax/auto-drive.git"
+    },
+    "bugs": {
+        "url": "https://github.com/LordPax/auto-drive/issues"
+    },
+    "homepage": "https://github.com/LordPax/auto-drive#readme",
     "scripts": {
         "start": "electron build/main.js",
         "build": "./compileTs.sh",
