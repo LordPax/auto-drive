@@ -10,7 +10,7 @@ export class Car {
         this.view = new CarView(this, ctx)
     }
 
-    public update():void {
+    public updateCar():void {
         this.model.setCoord(0, this.model.getCoord(0) + this.model.getVelocity(0))
         this.model.setCoord(1, this.model.getCoord(1) + this.model.getVelocity(1))
 
@@ -22,11 +22,15 @@ export class Car {
         // console.log('speed :', this.model.getSpeed())
     }
 
+    public drawCar():void {
+        this.view.drawCar()
+    }
+
     public forward():void {
-        this.model.setVelocity(this.model.getSpeed() - 2)
+        this.model.setVelocity(this.model.getSpeed() - this.model.getVmax())
     }
     public backward():void {
-        this.model.setVelocity(this.model.getSpeed() + 2)
+        this.model.setVelocity(this.model.getSpeed() + this.model.getVmax())
     }
     public turnRight():void {
         this.model.setAngle(this.model.getAngle() + 10)

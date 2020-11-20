@@ -16,7 +16,7 @@ export class CarModel {
         this.coord = [100, 100]
         this.velocity = [0, 0]
         this.speed = 0
-        this.size = [40, 20]
+        this.size = [50, 30]
         this.vMax = 5
         // this.angle = 90
         this.setAngle(90)
@@ -49,11 +49,13 @@ export class CarModel {
     public getVelocity(i:number):number { return this.velocity[i] }
     public getSpeed():number { return this.speed }
     public setVelocity(velocity:number):void { 
+        const minus:number = velocity >= -this.vMax ? 1 : -1
+        const vel:number = velocity <= this.vMax && velocity >= -this.vMax ? velocity : this.vMax * minus
         const { vx, vy } = this.convAngle(this.angle)
-        const vx2:number = velocity * vx
-        const vy2:number = velocity * vy
+        const vx2:number = vel * vx
+        const vy2:number = vel * vy
 
-        this.speed = velocity
+        this.speed = vel
         this.velocity = [vx2, vy2]
     }
 

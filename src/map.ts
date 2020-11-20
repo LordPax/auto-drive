@@ -18,8 +18,13 @@ export class Map {
     }
 
     public updateCars():void {
+        this.cars.forEach(car => car.updateCar())
+    }
 
+    public drawCars():void {
+        this.cars.forEach(car => car.drawCar())
     }
 
     public getCars(i:number):Car { return this.cars[i] }
+    public getAllCars():Car[] { return this.cars }
 }
