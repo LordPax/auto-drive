@@ -11,6 +11,16 @@ export const config = () => {
     canvas.style.height = height + 'px'
     ctx.scale(ratio, ratio)
 
+    window.addEventListener('resize', () => {
+        const width:number = window.innerWidth - 10
+        const height:number = window.innerHeight - 10
+
+        canvas.width = width * ratio
+        canvas.height = height * ratio
+        canvas.style.width = width + 'px'
+        canvas.style.height = height + 'px'
+    })
+
     return {
         ctx,
         width,

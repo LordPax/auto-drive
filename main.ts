@@ -45,4 +45,4 @@ const menu:Menu = Menu.buildFromTemplate([
     }
 ])
 
-// Menu.setApplicationMenu(menu)
+Menu.setApplicationMenu(menu)
