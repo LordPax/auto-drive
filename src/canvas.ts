@@ -1,33 +1,39 @@
+import { ipcRenderer } from 'electron'
 import { config } from './config'
-import { Map } from './map'
+import { Map } from './map/map'
+import { MapView } from './map/map_view'
+import { CarView } from './car/car_view'
 
 document.addEventListener('DOMContentLoaded', () => {
     const { ctx, width, height } = config()
-    const map:Map = new Map(2, ctx)
+    const map:Map = new Map(2)
+    map.initMap('map/test_map.json')
+    map.setView(new MapView(map, ctx))
+    map.setCarsView(car => car.setView(new CarView(car, ctx)))
 
     document.addEventListener('keypress', e => { // test des deplacements
         switch (e.key) {
             case 'z' :
-                map.getCars(0).forward()
+                map.getModel().getCars(0).forward()
                 break
             case 's' :
-                map.getCars(0).backward()
+                map.getModel().getCars(0).backward()
                 break
             case 'd' :
-                map.getCars(0).turnRight()
+                map.getModel().getCars(0).turnRight()
                 break
             case 'q' :
-                map.getCars(0).turnLeft()
+                map.getModel().getCars(0).turnLeft()
                 break
         }
     })
 
     const draw = ():void => {
         ctx.clearRect(0, 0, width, height)
-        map.drawCars()
+        map.draw()
     }
     const update = ():void => {
-        map.updateCars()
+        map.update()
     }
     const main = ():void => {
         draw()

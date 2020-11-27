@@ -1,5 +1,5 @@
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
-import { roundNumber } from './until'
+import { roundNumber } from '../until'
 
 export class CarModel {
     private brain:NeuralNetwork
@@ -18,7 +18,6 @@ export class CarModel {
         this.speed = 0
         this.size = [50, 30]
         this.vMax = 5
-        // this.angle = 90
         this.setAngle(90)
     }
 
@@ -37,20 +36,10 @@ export class CarModel {
         return { vx, vy }
     }
 
-    public getBrain():NeuralNetwork { return this.brain }
-    public setBrain(brain:NeuralNetwork):void { this.brain = brain }
-
-    public getCoord(i:number):number { return this.coord[i] }
-    public setCoord(i:number, v:number):void { this.coord[i] = v }
-
-    public getSize(i:number):number { return this.size[i] }
-    public setSize(i:number, v:number):void { this.size[i] = v }
-
-    public getVelocity(i:number):number { return this.velocity[i] }
-    public getSpeed():number { return this.speed }
     public setVelocity(velocity:number):void { 
         const minus:number = velocity >= -this.vMax ? 1 : -1
-        const vel:number = velocity <= this.vMax && velocity >= -this.vMax ? velocity : this.vMax * minus
+        const vel:number = velocity <= this.vMax && velocity >= -this.vMax 
+            ? velocity : this.vMax * minus
         const { vx, vy } = this.convAngle(this.angle)
         const vx2:number = vel * vx
         const vy2:number = vel * vy
@@ -59,10 +48,6 @@ export class CarModel {
         this.velocity = [vx2, vy2]
     }
 
-    public getVmax():number { return this.vMax }
-    public setVmax(v:number):void { this.vMax = v }
-
-    public getAngle():number { return this.angle }
     public setAngle(a:number):void { 
         const angle = a % 360
         const { vx, vy } = this.convAngle(angle)
@@ -72,4 +57,24 @@ export class CarModel {
         this.angle = angle
         this.velocity = [vx2, vy2]
     }
+
+    public getBrain():NeuralNetwork { return this.brain }
+    public setBrain(brain:NeuralNetwork):void { this.brain = brain }
+
+    public getAllCoord():number[] { return this.coord }
+    public getCoord(i:number):number { return this.coord[i] }
+    public setCoord(i:number, v:number):void { this.coord[i] = v }
+
+    public getAllSize():number[] { return this.size }
+    public getSize(i:number):number { return this.size[i] }
+    public setSize(i:number, v:number):void { this.size[i] = v }
+
+    public getVelocity(i:number):number { return this.velocity[i] }
+    public getSpeed():number { return this.speed }
+
+    public getVmax():number { return this.vMax }
+    public setVmax(v:number):void { this.vMax = v }
+
+    public getAngle():number { return this.angle }
+    
 }

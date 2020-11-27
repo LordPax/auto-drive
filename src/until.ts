@@ -6,6 +6,10 @@ interface Match {
     default : (act:Back) => any
 }
 
+export interface View {
+    draw():void
+}
+
 export const superfor = (compt:number, f:(i:number, r:any) => any, acc:number = 0, r:any = null):any => {
     const re:any = acc < compt ? f(acc, r) : r
     return acc < compt ? superfor(compt, f, acc + 1, re) : re
