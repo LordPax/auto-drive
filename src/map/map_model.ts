@@ -1,18 +1,19 @@
 import { ipcRenderer } from 'electron'
-import { roundNumber } from '../until'
+import { roundNumber, Wall, Point } from '../include/until'
 import { Car } from '../car/car'
 import * as fs from 'fs'
 
 export class MapModel {
     private cars:Car[]
     private nbCar:number
-    private mapContent:number[][]
+    private wall:Wall[]
 
-    constructor(nbCar:number) {
+    constructor(nbCar:number, file:string) {
         this.nbCar = nbCar
         this.cars = []
-        this.mapContent = []
+        this.wall = []
         this.initCars(nbCar)
+        this.initMap(file)
     }
 
     public initCars(nb:number):void {
@@ -22,12 +23,15 @@ export class MapModel {
 
     public initMap(file:string):void {
         ipcRenderer.send('file', file)
-        ipcRenderer.on('content-file', (event, arg) => this.mapContent = arg)
+        ipcRenderer.on('content-file', (event, arg) => {
+            this.wall = arg.wall
+            this.cars.forEach(car => car.getModel().setCoord(arg.spawn))
+        })
     }
 
     public getCars(i:number):Car { return this.cars[i] }
     public getAllCars():Car[] { return this.cars }
 
-    public getMapContent(l:number, c:number):number { return this.mapContent[l][c] }
-    public getAllMapContent():number[][] { return this.mapContent }
+    public getWall(i:number):Wall { return this.wall[i] }
+    public getAllWall():Wall[] { return this.wall }
 }

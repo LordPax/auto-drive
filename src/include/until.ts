@@ -1,14 +1,36 @@
 type Back = () => any
+
 interface Match {
-    case : (val:any, act:Back) => any
-    if: (cond:boolean, act:Back) => any
-    plage: (val1:any, val2:any, act:Back) => any
-    default : (act:Back) => any
+    case:(val:any, act:Back) => any
+    if:(cond:boolean, act:Back) => any
+    plage:(val1:any, val2:any, act:Back) => any
+    default:(act:Back) => any
 }
 
 export interface View {
     draw():void
 }
+
+export interface Line {
+    x:number
+    y:number
+    toX:number
+    toY:number
+}
+
+export type Wall = Line
+
+export interface Point {
+    x:number
+    y:number
+}
+
+export interface MapContent {
+    spawn:Point
+    wall:Wall[]
+}
+
+export type Vector = Point
 
 export const superfor = (compt:number, f:(i:number, r:any) => any, acc:number = 0, r:any = null):any => {
     const re:any = acc < compt ? f(acc, r) : r
@@ -27,10 +49,10 @@ export const rand2 = ():number =>
     randInt(0, 1) === 0 ? rand() : rand(true)
 
 export const match = (test:any, acc:any = null):Match => ({
-    case : (val:any, act:Back):any => match(test, val === test ? act() : acc),
+    case: (val:any, act:Back):any => match(test, val === test ? act() : acc),
     if: (cond:boolean, act:Back):any => match(test, cond ? act() : acc),
     plage: (val1:any, val2:any, act:Back):any => match(test, (test >= val1 && test <= val2) ? act() : acc),
-    default : (act:Back):any => acc === null ? act() : acc
+    default: (act:Back):any => acc === null ? act() : acc
 })
 
 export const roundNumber = (num:number, dec:number):number => 

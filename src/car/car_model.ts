@@ -1,22 +1,23 @@
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
-import { roundNumber } from '../until'
+import { roundNumber, Point } from '../include/until'
 
 export class CarModel {
     private brain:NeuralNetwork
-    private coord:number[]
-    private velocity:number[]
+    private coord:Point
+    private velocity:Point
     private vMax:number
-    private size:number[]
+    private size:Point
     private angle:number
     private speed:number
 
-    constructor() {
+    constructor(x:number = 0, y:number = 0) {
         this.brain = new NeuralNetwork(5)
         this.initBrain()
-        this.coord = [100, 100]
-        this.velocity = [0, 0]
+        this.coord = {x, y}
+        this.velocity = {x:0, y:0}
         this.speed = 0
-        this.size = [50, 30]
+        // this.size = {x:50, y:30}
+        this.size = {x:30, y:30}
         this.vMax = 5
         this.setAngle(90)
     }
@@ -45,7 +46,7 @@ export class CarModel {
         const vy2:number = vel * vy
 
         this.speed = vel
-        this.velocity = [vx2, vy2]
+        this.velocity = {x:vx2, y:vy2}
     }
 
     public setAngle(a:number):void { 
@@ -55,26 +56,23 @@ export class CarModel {
         const vy2:number = this.speed * vy
 
         this.angle = angle
-        this.velocity = [vx2, vy2]
+        this.velocity = {x:vx2, y:vy2}
     }
 
     public getBrain():NeuralNetwork { return this.brain }
     public setBrain(brain:NeuralNetwork):void { this.brain = brain }
 
-    public getAllCoord():number[] { return this.coord }
-    public getCoord(i:number):number { return this.coord[i] }
-    public setCoord(i:number, v:number):void { this.coord[i] = v }
+    public getCoord():Point { return this.coord }
+    public setCoord(v:Point):void { this.coord = v }
 
-    public getAllSize():number[] { return this.size }
-    public getSize(i:number):number { return this.size[i] }
-    public setSize(i:number, v:number):void { this.size[i] = v }
+    public getSize():Point { return this.size }
+    public setSize(v:Point):void { this.size = v }
 
-    public getVelocity(i:number):number { return this.velocity[i] }
+    public getVelocity():Point { return this.velocity }
     public getSpeed():number { return this.speed }
 
     public getVmax():number { return this.vMax }
     public setVmax(v:number):void { this.vMax = v }
 
     public getAngle():number { return this.angle }
-    
 }

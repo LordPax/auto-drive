@@ -1,14 +1,14 @@
 import { Car } from '../car/car'
 import { MapView } from './map_view'
 import { MapModel } from './map_model'
-import { View } from '../until'
+import { View } from '../include/until'
 
 export class Map {
     private model:MapModel
     private view:View
 
-    constructor(nbCar:number) {
-        this.model = new MapModel(nbCar)
+    constructor(nbCar:number, file:string) {
+        this.model = new MapModel(nbCar, file)
     }
 
     public initMap(map:string):void {
@@ -16,11 +16,14 @@ export class Map {
     }
 
     public update():void {
-        this.model.getAllCars().forEach(car => car.updateCar())
+        this.model.getAllCars().forEach(car => {
+            if (!car.collision(this.model.getAllWall()))
+                car.update()
+        })
     }
 
     public draw():void {
-        this.model.getAllCars().forEach(car => car.drawCar())
+        this.model.getAllCars().forEach(car => car.draw())
         this.view.draw()
     }
 

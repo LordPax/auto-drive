@@ -1,15 +1,25 @@
 import { ipcRenderer } from 'electron'
-import { config } from './config'
+import { config } from './include/config'
 import { Map } from './map/map'
 import { MapView } from './map/map_view'
 import { CarView } from './car/car_view'
 
 document.addEventListener('DOMContentLoaded', () => {
-    const { ctx, width, height } = config()
-    const map:Map = new Map(2)
-    map.initMap('map/test_map.json')
+    let { ctx, width, height, canvas, ratio } = config()
+    const map:Map = new Map(1, 'save/map/test_map2.json')
+
     map.setView(new MapView(map, ctx))
     map.setCarsView(car => car.setView(new CarView(car, ctx)))
+
+    window.addEventListener('resize', () => {
+        width = window.innerWidth - 10
+        height = window.innerHeight - 10
+
+        canvas.width = width * ratio
+        canvas.height = height * ratio
+        canvas.style.width = width + 'px'
+        canvas.style.height = height + 'px'
+    })
 
     document.addEventListener('keypress', e => { // test des deplacements
         switch (e.key) {
