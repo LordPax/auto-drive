@@ -1,6 +1,6 @@
-import { CarView } from './car_view'
+import { CarViewElectron } from './car_view'
 import { CarModel } from './car_model'
-import { View, Wall, Point, Vector, Line } from '../include/until'
+import { View, Wall, Point, Vector, Line, Sensor } from '../include/type'
 
 export class Car {
     private model:CarModel
@@ -10,10 +10,18 @@ export class Car {
         this.model = new CarModel(x, y)
     }
 
-    public update():void {
+    public update(wall:Wall[]):void {
         const coord:Point = this.model.getCoord()
+        const size:Point = this.model.getSize()
         const vel:Point = this.model.getVelocity()
+        const sensor:Sensor[] = this.model.getAllSensor()
+
+        const an:number = 180 / (sensor.length + 1)
+        const angle:number = this.model.getAngle() + 90
+
         this.model.setCoord({x:coord.x + vel.x, y:coord.y + vel.y})
+        this.model.setAllSensor(sensor.map((sen, i) => this.model.createSensor(200, angle - (an * (i + 1)))))
+        this.model.setAllPtsSensor(this.sensorPoint(wall))
     }
 
     public draw():void {
@@ -43,6 +51,35 @@ export class Car {
         return collision.length > 0
     }
 
+    public sensorPoint(wall:Wall[]):Point[] {
+        const sensor:Sensor[] = this.model.getAllSensor()
+        const coord:Point = this.model.getCoord()
+
+        const point:Point[] = sensor.map(s => {
+            const coli:Point[] = wall
+            .map(w => this.sensorCollidePoint(s, w))
+            .filter(col => col != null)
+            .sort((a:Point, b:Point) => {
+                const distA:number = this.distance(a);
+                const distB:number = this.distance(b);
+
+                return distA - distB
+            })
+
+            return coli.length > 0 ? coli[0] : null
+        })
+
+        return point
+    }
+
+    public distance(pts:Point):number {
+        const coord:Point = this.model.getCoord()
+        const vec:Point = {x:pts.x - coord.x, y:pts.y - coord.y}
+        const dist:number = Math.sqrt(vec.x * vec.x + vec.y * vec.y)
+
+        return dist
+    }
+
     public intersec(line:Line, line2:Line):{t:number, u:number} {
         const vecD:Vector = {x:line.toX - line.x, y:line.toY - line.y}
         const vecE:Vector = {x:line2.toX - line2.x, y:line2.toY - line2.y}
@@ -60,17 +97,23 @@ export class Car {
         return t >= 0 && t <= 1 && u >= 0 && u <= 1
     }
 
-    public sensor(line:Line, line2:Line):number {
+    public sensorCollidePoint(line:Line, line2:Line):Point {
         const {t, u} = this.intersec(line, line2)
-        // TODO : implement sensor
-        return 0
+
+        const cond:boolean = t >= 0 && t <= 1 && u >= 0 && u <= 1
+        const vecD:Vector = {x:line.toX - line.x, y:line.toY - line.y}
+
+        const interX:number = line.x + t * vecD.x
+        const interY:number = line.y + t * vecD.y
+
+        return cond ? {x:interX, y:interY} : null
     }
 
     public forward():void {
-        this.model.setVelocity(this.model.getSpeed() - this.model.getVmax())
+        this.model.setVelocity(this.model.getSpeed() + this.model.getVmax())
     }
     public backward():void {
-        this.model.setVelocity(this.model.getSpeed() + this.model.getVmax())
+        this.model.setVelocity(this.model.getSpeed() - this.model.getVmax())
     }
     public turnRight():void {
         this.model.setAngle(this.model.getAngle() + 10)

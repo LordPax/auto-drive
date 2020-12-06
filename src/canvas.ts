@@ -1,15 +1,17 @@
 import { ipcRenderer } from 'electron'
 import { config } from './include/config'
 import { Map } from './map/map'
-import { MapView } from './map/map_view'
-import { CarView } from './car/car_view'
+import { MapViewElectron } from './map/map_view'
+import { CarViewElectron } from './car/car_view'
+import { MapModelElectron } from './map/map_model'
 
 document.addEventListener('DOMContentLoaded', () => {
     let { ctx, width, height, canvas, ratio } = config()
-    const map:Map = new Map(1, 'save/map/test_map2.json')
+    const map:Map = new Map()
 
-    map.setView(new MapView(map, ctx))
-    map.setCarsView(car => car.setView(new CarView(car, ctx)))
+    map.setModel(new MapModelElectron(1, 'save/map/test_map2.json'))
+    map.setView(new MapViewElectron(map, ctx))
+    map.setCarsView(car => new CarViewElectron(car, ctx))
 
     window.addEventListener('resize', () => {
         width = window.innerWidth - 10

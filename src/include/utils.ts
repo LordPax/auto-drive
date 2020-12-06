@@ -1,36 +1,4 @@
-type Back = () => any
-
-interface Match {
-    case:(val:any, act:Back) => any
-    if:(cond:boolean, act:Back) => any
-    plage:(val1:any, val2:any, act:Back) => any
-    default:(act:Back) => any
-}
-
-export interface View {
-    draw():void
-}
-
-export interface Line {
-    x:number
-    y:number
-    toX:number
-    toY:number
-}
-
-export type Wall = Line
-
-export interface Point {
-    x:number
-    y:number
-}
-
-export interface MapContent {
-    spawn:Point
-    wall:Wall[]
-}
-
-export type Vector = Point
+import { Match, Back } from './type'
 
 export const superfor = (compt:number, f:(i:number, r:any) => any, acc:number = 0, r:any = null):any => {
     const re:any = acc < compt ? f(acc, r) : r

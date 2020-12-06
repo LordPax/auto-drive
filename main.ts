@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, ipcMain } from 'electron'
 import { mainWindow, menu } from './src/include/window'
-import { Wall, MapContent } from './src/include/until'
+import { Wall, MapContent } from './src/include/type'
 import * as path from 'path'
 import * as fs from 'fs'
 

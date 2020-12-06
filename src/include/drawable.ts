@@ -26,7 +26,7 @@ export class Drawable {
     }
 
     public drawLine(x:number, y:number, toX:number, toY:number, color:string):void {
-        this.ctx.fillStyle = '#000000'
+        this.ctx.strokeStyle = color
         this.ctx.beginPath()
         this.ctx.moveTo(x, y)
         this.ctx.lineTo(toX, toY)
