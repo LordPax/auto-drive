@@ -1,4 +1,5 @@
-import { Match, Back } from './type'
+import { Match, Back, MapContent } from './type'
+import { ipcRenderer } from 'electron'
 
 export const superfor = (compt:number, f:(i:number, r:any) => any, acc:number = 0, r:any = null):any => {
     const re:any = acc < compt ? f(acc, r) : r
@@ -25,3 +26,14 @@ export const match = (test:any, acc:any = null):Match => ({
 
 export const roundNumber = (num:number, dec:number):number => 
     Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec)
+
+export const emptyMap:MapContent = {
+    spawn:{x:0, y:0},
+    wall:[],
+    gate:[],
+    text:[]
+}
+
+export const prompt = (label:string):Promise<string> => new Promise((resolve, reject) => {
+    ipcRenderer.send('prompt', label)
+})

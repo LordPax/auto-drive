@@ -3,13 +3,13 @@ import { config } from './include/config'
 import { Map } from './map/map'
 import { MapViewElectron } from './map/map_view'
 import { CarViewElectron } from './car/car_view'
-import { MapModelElectron } from './map/map_model'
+import { MapModel } from './map/map_model'
 
 document.addEventListener('DOMContentLoaded', () => {
     let { ctx, width, height, canvas, ratio } = config()
-    const map:Map = new Map()
+    // const map:Map = new Map(5, 'save/map/test_map2.json')
+    const map:Map = new Map(10, 'save/map/map_edit.json')
 
-    map.setModel(new MapModelElectron(1, 'save/map/test_map2.json'))
     map.setView(new MapViewElectron(map, ctx))
     map.setCarsView(car => new CarViewElectron(car, ctx))
 
@@ -21,23 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.height = height * ratio
         canvas.style.width = width + 'px'
         canvas.style.height = height + 'px'
-    })
-
-    document.addEventListener('keypress', e => { // test des deplacements
-        switch (e.key) {
-            case 'z' :
-                map.getModel().getCars(0).forward()
-                break
-            case 's' :
-                map.getModel().getCars(0).backward()
-                break
-            case 'd' :
-                map.getModel().getCars(0).turnRight()
-                break
-            case 'q' :
-                map.getModel().getCars(0).turnLeft()
-                break
-        }
     })
 
     const draw = ():void => {

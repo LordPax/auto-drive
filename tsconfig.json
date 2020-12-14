@@ -16,7 +16,9 @@
     },
     "include": [
         "main.ts",
-        "src/canvas.ts"
+        "src/showCanvas.ts",
+        "src/editCanvas.ts",
+        "src/include/prompt.ts"
     ],
     "exclude": [
         "node_modules",

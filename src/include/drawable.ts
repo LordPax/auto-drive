@@ -32,4 +32,10 @@ export class Drawable {
         this.ctx.lineTo(toX, toY)
         this.ctx.stroke()
     }
+
+    public drawText(x:number, y:number, text:string, color:string = '#000000', size:number = 20, font:string = 'Arial'):void {
+        this.ctx.font = size + 'px ' + font;
+        this.ctx.fillStyle = color
+        this.ctx.fillText(text, x, y); 
+    }
 }

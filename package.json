@@ -13,7 +13,8 @@
     },
     "homepage": "https://github.com/LordPax/auto-drive#readme",
     "scripts": {
-        "start": "electron build/main.js",
+        "start:show": "electron build/main.js show",
+        "start:editor": "electron build/main.js editor",
         "build": "./compileTs.sh",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

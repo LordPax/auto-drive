@@ -1,6 +1,7 @@
 import { CarViewElectron } from './car_view'
 import { CarModel } from './car_model'
-import { View, Wall, Point, Vector, Line, Sensor } from '../include/type'
+import { View, Wall, Point, Vector, Line, Sensor, Gate } from '../include/type'
+import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
 
 export class Car {
     private model:CarModel
@@ -10,7 +11,7 @@ export class Car {
         this.model = new CarModel(x, y)
     }
 
-    public update(wall:Wall[]):void {
+    public update(wall:Wall[], gate:Gate[]):void {
         const coord:Point = this.model.getCoord()
         const size:Point = this.model.getSize()
         const vel:Point = this.model.getVelocity()
@@ -22,22 +23,42 @@ export class Car {
         this.model.setCoord({x:coord.x + vel.x, y:coord.y + vel.y})
         this.model.setAllSensor(sensor.map((sen, i) => this.model.createSensor(200, angle - (an * (i + 1)))))
         this.model.setAllPtsSensor(this.sensorPoint(wall))
+        this.isGatePasse(gate)
+
+        if (wall.length !== 0)
+            this.calculeMove()
     }
 
     public draw():void {
         this.view.draw()
     }
 
-    public collision(wall:Wall[]):boolean {
-        const {x, y} = this.model.getCoord()
-        const {x:sx, y:sy} = this.model.getSize()
+    public calculeMove():void {
+        const coord:Point = this.model.getCoord()
+        const ptsSen:Point[] = this.model.getAllPtsSensor()
+        const brain:NeuralNetwork = this.model.getBrain()
 
-        const ptsCar:Line[] = [ // p1 p2 p3 p4
-            {x, y, toX:x + sx, toY:y},
-            {x:x + sx, y, toX:x, toY:y + sy},
-            {x, y:y + sy, toX:x + sx, toY:y + sy},
-            {x:x + sx, y:y + sy, toX:x, toY:y}
-        ]
+        const dist:number[][] = ptsSen
+        .map(pts => pts !== null ? pts : {x:coord.x, y:coord.y})
+        .map(pts => [this.distance(pts, coord)])
+
+        const res:number[][] = brain.calculate(dist, Tanh, Heaviside)
+
+        if (res[0][0] == 1)
+            this.forward()
+
+        if (res[1][0] == 1)
+            this.backward()
+
+        if (res[2][0] == 1)
+            this.turnRight()
+
+        if (res[3][0] == 1)
+            this.turnLeft()
+    }
+
+    public collision(wall:Wall[]):boolean {
+        const ptsCar:Line[] = this.dimensionCar()
 
         const collision:boolean[] = wall.map(w => {
             const coli:boolean[] = ptsCar
@@ -58,11 +79,11 @@ export class Car {
         const point:Point[] = sensor.map(s => {
             const coli:Point[] = wall
             .map(w => this.sensorCollidePoint(s, w))
-            .filter(col => col != null)
+            .filter(col => col !== null)
             .sort((a:Point, b:Point) => {
-                const distA:number = this.distance(a);
-                const distB:number = this.distance(b);
-
+                const distA:number = this.distance(a, coord);
+                const distB:number = this.distance(b, coord);
+                
                 return distA - distB
             })
 
@@ -72,11 +93,41 @@ export class Car {
         return point
     }
 
-    public distance(pts:Point):number {
-        const coord:Point = this.model.getCoord()
-        const vec:Point = {x:pts.x - coord.x, y:pts.y - coord.y}
-        const dist:number = Math.sqrt(vec.x * vec.x + vec.y * vec.y)
+    public isGatePasse(gate:Gate[]):void {
+        const gp:number[] = this.model.getAllGatePassed()
+        const rw:number = this.model.getBrain().getReward()
+        const ptsCar:Line[] = this.dimensionCar()
 
+        gate.forEach((g, i) => {
+            const coli:number = gp.indexOf(i) === -1 
+            ? ptsCar.map(pts => this.getCollide(g, pts))
+            .filter(col => col === true).length
+            : 0
+
+            if (coli > 0) {
+                this.model.addGatePassed(i) 
+                this.model.getBrain().setReward(rw + 1)
+                // console.log(rw + 1)
+            }
+        })
+    }
+
+    public dimensionCar():Line[] {
+        const {x, y} = this.model.getCoord()
+        const {x:sx, y:sy} = this.model.getSize()
+
+        return [ // p1 p2 p3 p4
+            {x, y, toX:x + sx, toY:y},
+            {x:x + sx, y, toX:x, toY:y + sy},
+            {x, y:y + sy, toX:x + sx, toY:y + sy},
+            {x:x + sx, y:y + sy, toX:x, toY:y}
+        ]
+    }
+
+    public distance(ptsA:Point, ptsB:Point):number {
+        const vec:Point = {x:ptsA.x - ptsB.x, y:ptsA.y - ptsB.y}
+        const dist:number = Math.sqrt(vec.x * vec.x + vec.y * vec.y)
+        
         return dist
     }
 

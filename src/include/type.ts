@@ -20,15 +20,24 @@ export interface Line {
 
 export type Wall = Line
 export type Sensor = Line
+export type Gate = Line
 
 export interface Point {
     x:number
     y:number
 }
 
+export type Vector = Point
+
+export interface MapText {
+    x:number
+    y:number
+    txt:string
+}
+
 export interface MapContent {
     spawn:Point
     wall:Wall[]
+    gate:Gate[]
+    text:MapText[]
 }
-
-export type Vector = Point

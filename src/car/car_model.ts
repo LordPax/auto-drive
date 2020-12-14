@@ -1,6 +1,6 @@
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
 import { roundNumber } from '../include/utils'
-import { Point, Sensor } from '../include/type'
+import { Point, Sensor, Gate } from '../include/type'
 
 export class CarModel {
     private brain:NeuralNetwork
@@ -12,6 +12,7 @@ export class CarModel {
     private speed:number
     private sensor:Sensor[]
     private ptsSensor:Point[]
+    private gatePassed:number[]
 
     constructor(x:number = 0, y:number = 0) {
         this.brain = new NeuralNetwork(5)
@@ -23,6 +24,8 @@ export class CarModel {
         this.vMax = 5
         this.sensor = []
         this.ptsSensor = []
+        this.gatePassed = []
+        // this.setAngle(-110)
         this.setAngle(-90)
         this.initSensor(5)
     }
@@ -90,6 +93,11 @@ export class CarModel {
 
     public getCoord():Point { return this.coord }
     public setCoord(v:Point):void { this.coord = v }
+
+    public getGatePassed(i:number):number { return this.gatePassed[i] }
+    public getAllGatePassed():number[] { return this.gatePassed }
+    public setGatePassed(gp:number, i:number):void { this.gatePassed[i] = gp }
+    public addGatePassed(gp:number):void { this.gatePassed = [...this.gatePassed, gp] }
 
     public getSensor(i:number):Sensor { return this.sensor[i] }
     public getAllSensor():Sensor[] { return this.sensor }
