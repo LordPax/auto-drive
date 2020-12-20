@@ -41,9 +41,6 @@ export class Editor {
             .case('s', () => 5) // s : mode save map
             .case('r', () => 6) // r : mode add text (soon)
             .default(() => 0)
-
-            // console.log(keyEvent.key)
-            // console.log(this.mode)
             
             if (this.mode !== 1) this.ptsW = null
         })

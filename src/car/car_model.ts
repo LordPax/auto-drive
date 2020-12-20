@@ -14,9 +14,9 @@ export class CarModel {
     private ptsSensor:Point[]
     private gatePassed:number[]
 
-    constructor(x:number = 0, y:number = 0) {
+    constructor(x:number = 0, y:number = 0, weight:number[][][] = null, bias:number[][][] = null) {
         this.brain = new NeuralNetwork(5)
-        this.initBrain()
+        this.initBrain(weight, bias)
         this.coord = {x, y}
         this.velocity = {x:0, y:0}
         this.speed = 0
@@ -30,12 +30,18 @@ export class CarModel {
         this.initSensor(5)
     }
 
-    public initBrain():void {
-        this.brain.addLayer(5)
-        this.brain.addLayer(5)
-        this.brain.addLayer(5)
-        this.brain.addLayer(5)
-        this.brain.addLayer(4)
+    public initBrain(weight:number[][][], bias:number[][][]):void {
+        if (weight !== null && bias !== null) {
+            this.brain.loadWeight(weight)
+            this.brain.loadBias(bias)
+        }
+        else {
+            this.brain.addLayer(5)
+            this.brain.addLayer(5)
+            this.brain.addLayer(5)
+            this.brain.addLayer(5)
+            this.brain.addLayer(4)
+        }
     }
 
     public initSensor(nb:number, acc:number = 1):void {

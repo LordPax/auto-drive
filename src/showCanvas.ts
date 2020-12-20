@@ -7,8 +7,8 @@ import { MapModel } from './map/map_model'
 
 document.addEventListener('DOMContentLoaded', () => {
     let { ctx, width, height, canvas, ratio } = config()
-    // const map:Map = new Map(5, 'save/map/test_map2.json')
-    const map:Map = new Map(10, 'save/map/map_edit.json')
+    const map:Map = new Map(50, 'save/map/map_edit.json', 'save/model/model_test.json')
+    // const map:Map = new Map(50, 'save/map/map_edit.json')
 
     map.setView(new MapViewElectron(map, ctx))
     map.setCarsView(car => new CarViewElectron(car, ctx))
@@ -28,7 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
         map.draw()
     }
     const update = ():void => {
-        map.update()
+        if (!map.isFinish())
+            map.update()
     }
     const main = ():void => {
         draw()

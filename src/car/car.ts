@@ -1,14 +1,18 @@
 import { CarViewElectron } from './car_view'
 import { CarModel } from './car_model'
+import { Map } from '../map/map'
+import { MapModel } from '../map/map_model'
 import { View, Wall, Point, Vector, Line, Sensor, Gate } from '../include/type'
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
+import { distance, intersec, getCollide, sensorCollidePoint } from '../include/utils'
 
 export class Car {
     private model:CarModel
     private view:View
+    private map:Map
 
-    constructor(x:number = 0, y:number = 0) {
-        this.model = new CarModel(x, y)
+    constructor(x:number = 0, y:number = 0, weight:number[][][] = null, bias:number[][][] = null) {
+        this.model = new CarModel(x, y, weight, bias)
     }
 
     public update(wall:Wall[], gate:Gate[]):void {
@@ -40,20 +44,20 @@ export class Car {
 
         const dist:number[][] = ptsSen
         .map(pts => pts !== null ? pts : {x:coord.x, y:coord.y})
-        .map(pts => [this.distance(pts, coord)])
+        .map(pts => [distance(pts, coord)])
 
         const res:number[][] = brain.calculate(dist, Tanh, Heaviside)
 
-        if (res[0][0] == 1)
+        if (res[0][0] === 1)
             this.forward()
 
-        if (res[1][0] == 1)
+        if (res[1][0] === 1)
             this.backward()
 
-        if (res[2][0] == 1)
+        if (res[2][0] === 1)
             this.turnRight()
 
-        if (res[3][0] == 1)
+        if (res[3][0] === 1)
             this.turnLeft()
     }
 
@@ -62,7 +66,7 @@ export class Car {
 
         const collision:boolean[] = wall.map(w => {
             const coli:boolean[] = ptsCar
-            .map(pts => this.getCollide(w, pts))
+            .map(pts => getCollide(w, pts))
             .filter(col => col === true)
 
             return coli.length > 0
@@ -78,11 +82,11 @@ export class Car {
 
         const point:Point[] = sensor.map(s => {
             const coli:Point[] = wall
-            .map(w => this.sensorCollidePoint(s, w))
+            .map(w => sensorCollidePoint(s, w))
             .filter(col => col !== null)
             .sort((a:Point, b:Point) => {
-                const distA:number = this.distance(a, coord);
-                const distB:number = this.distance(b, coord);
+                const distA:number = distance(a, coord);
+                const distB:number = distance(b, coord);
                 
                 return distA - distB
             })
@@ -97,17 +101,17 @@ export class Car {
         const gp:number[] = this.model.getAllGatePassed()
         const rw:number = this.model.getBrain().getReward()
         const ptsCar:Line[] = this.dimensionCar()
+        const date:Date = new Date()
 
         gate.forEach((g, i) => {
             const coli:number = gp.indexOf(i) === -1 
-            ? ptsCar.map(pts => this.getCollide(g, pts))
-            .filter(col => col === true).length
-            : 0
+            ? ptsCar.map(pts => getCollide(g, pts))
+            .filter(col => col === true).length : 0
 
             if (coli > 0) {
-                this.model.addGatePassed(i) 
+                this.model.addGatePassed(i)
                 this.model.getBrain().setReward(rw + 1)
-                // console.log(rw + 1)
+                MapModel.timeComp = date.getTime() + MapModel.timeMax
             }
         })
     }
@@ -116,48 +120,12 @@ export class Car {
         const {x, y} = this.model.getCoord()
         const {x:sx, y:sy} = this.model.getSize()
 
-        return [ // p1 p2 p3 p4
+        return [
             {x, y, toX:x + sx, toY:y},
             {x:x + sx, y, toX:x, toY:y + sy},
             {x, y:y + sy, toX:x + sx, toY:y + sy},
             {x:x + sx, y:y + sy, toX:x, toY:y}
         ]
-    }
-
-    public distance(ptsA:Point, ptsB:Point):number {
-        const vec:Point = {x:ptsA.x - ptsB.x, y:ptsA.y - ptsB.y}
-        const dist:number = Math.sqrt(vec.x * vec.x + vec.y * vec.y)
-        
-        return dist
-    }
-
-    public intersec(line:Line, line2:Line):{t:number, u:number} {
-        const vecD:Vector = {x:line.toX - line.x, y:line.toY - line.y}
-        const vecE:Vector = {x:line2.toX - line2.x, y:line2.toY - line2.y}
-
-        const denom:number = vecD.x * vecE.y - vecD.y * vecE.x
-
-        const t:number = -(line.x * vecE.y - line2.x * vecE.y - vecE.x * line.y + vecE.x * line2.y) / denom
-        const u:number = -(-vecD.x * line.y + vecD.x * line2.y + vecD.y * line.x - vecD.y * line2.x) / denom
-
-        return {t, u}
-    }
-
-    public getCollide(line:Line, line2:Line):boolean {
-        const {t, u} = this.intersec(line, line2)
-        return t >= 0 && t <= 1 && u >= 0 && u <= 1
-    }
-
-    public sensorCollidePoint(line:Line, line2:Line):Point {
-        const {t, u} = this.intersec(line, line2)
-
-        const cond:boolean = t >= 0 && t <= 1 && u >= 0 && u <= 1
-        const vecD:Vector = {x:line.toX - line.x, y:line.toY - line.y}
-
-        const interX:number = line.x + t * vecD.x
-        const interY:number = line.y + t * vecD.y
-
-        return cond ? {x:interX, y:interY} : null
     }
 
     public forward():void {

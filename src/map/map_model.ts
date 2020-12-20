@@ -1,39 +1,85 @@
 import { ipcRenderer } from 'electron'
-import { roundNumber, emptyMap } from '../include/utils'
-import { Wall, Point, MapContent, Gate, MapText } from '../include/type'
+import { roundNumber, emptyMap, compareCar, emptyModel } from '../include/utils'
+import { Wall, Point, MapContent, Gate, MapText, ModelContent } from '../include/type'
 import { Car } from '../car/car'
 import * as fs from 'fs'
 
 export class MapModel {
-    protected cars:Car[]
-    protected nbCar:number
-    protected wall:Wall[]
-    protected gate:Gate[]
-    protected text:MapText[]
+    private cars:Car[]
+    private nbCar:number
+    private wall:Wall[]
+    private gate:Gate[]
+    private text:MapText[]
+    public static timeGate:number // temps en miliseconds entre chaque gate
+    public static timeComp:number
+    public static timeMax:number = 3000
 
-    constructor(nbCar:number, file:string) {
+    constructor(nbCar:number, fileMap:string, fileModel:string|ModelContent[]) {
         this.nbCar = nbCar
         this.cars = []
         this.wall = []
         this.gate = []
         this.text = []
-        this.initCars(nbCar)
-        this.loadMap(file)
+        const date:Date = new Date()
+        const time:number = date.getTime()
+        MapModel.timeGate = time
+        MapModel.timeComp = time + MapModel.timeMax
+        this.initAll(nbCar, fileMap, fileModel)
     }
 
-    public initCars(nb:number):void {
-        this.cars = [...this.cars, new Car()]
-        return nb > 1 ? this.initCars(nb - 1) : null
+    public initCars(nb:number, spawn:Point, model:ModelContent[], acc:number = 0):void {
+        if (model.length > 0)
+            this.cars = [...this.cars, new Car(spawn.x, spawn.y, model[acc].weight, model[acc].bias)]
+        else
+            this.cars = [...this.cars, new Car(spawn.x, spawn.y)]
+        return acc < nb - 1 ? this.initCars(nb, spawn, model, acc + 1) : null
     }
 
-    public loadMap(file:string):void {
+    public loadModel(file:string):ModelContent[] {
         const content:string = fs.existsSync(file) ? fs.readFileSync(file, {encoding: 'utf8'}) : ''
-        const map:MapContent = content !== '' ? JSON.parse(content) : emptyMap
-        this.cars.forEach(car => car.getModel().setCoord(map.spawn))
+        return content !== '' ? JSON.parse(content) : []
+    }
+
+    public loadMap(file:string):MapContent {
+        const content:string = fs.existsSync(file) ? fs.readFileSync(file, {encoding: 'utf8'}) : ''
+        return content !== '' ? JSON.parse(content) : emptyMap
+    }
+
+    public initAll(nbCar:number, fileMap:string, fileModel:string|ModelContent[]):void {
+        const map:MapContent = this.loadMap(fileMap)
+        const model:ModelContent[] = typeof fileModel === 'string'
+            ? this.loadModel(fileModel) : fileModel
+
         this.wall = map.wall
         this.gate = map.gate
         this.text = map.text
+
+        this.initCars(nbCar, map.spawn, model)
     }
+
+    public extractModel():ModelContent[] {
+        return this.cars
+        .sort(compareCar)
+        .map(car => {
+            const weight:number[][][] = car.getModel().getBrain().saveWeight()
+            const bias:number[][][] = car.getModel().getBrain().saveBias()
+
+            return {
+                weight,
+                bias
+            }
+        })
+    }
+
+    public saveModel(file:string):void {
+        const model:ModelContent[] = this.extractModel()
+        const data:string = JSON.stringify(model)
+        fs.writeFileSync(file, data)
+    }
+
+    public getWinner():Car { return this.cars.sort(compareCar)[0]}
+
+    public getNbCar():number { return this.nbCar }
 
     public getCars(i:number):Car { return this.cars[i] }
     public getAllCars():Car[] { return this.cars }
@@ -47,34 +93,3 @@ export class MapModel {
     public getText(i:number):MapText { return this.text[i] }
     public getAllText():MapText[] { return this.text }
 }
-
-/*export class MapModelElectron extends MapModel {
-    constructor(nbCar:number, file:string) {
-        super(nbCar, file);
-    }
-
-    public loadMap(file:string):void {
-        ipcRenderer.send('file', file)
-        ipcRenderer.on('content-file', (event, arg) => {
-            this.cars.forEach(car => car.getModel().setCoord(arg.spawn))
-            this.wall = arg.wall
-        })
-    }
-
-    public loadMap(file:string):void {
-        const content:string = fs.existsSync(file) ? fs.readFileSync(file, {encoding: 'utf8'}) : ''
-        const map:MapContent = JSON.parse(content)
-        this.cars.forEach(car => car.getModel().setCoord(map.spawn))
-        this.wall = map.wall
-    }
-}
-
-export class MapModelNode extends MapModel {
-    constructor(nbCar:number, file:string) {
-        super(nbCar, file);
-    }
-
-    public loadMap(file:string):void {
-        // TODO : implementer une version sans event
-    }
-}*/

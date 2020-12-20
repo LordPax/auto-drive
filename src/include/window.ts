@@ -88,18 +88,30 @@ export const editWindow = () => {
 //     child.once('ready-to-show', () => { child.show() })
 // }
 
-export const menu = Menu.buildFromTemplate([
+// export const menu = Menu.buildFromTemplate([
+//     {
+//         label : 'Partie',
+//         submenu : [
+//             {
+//                 label : 'Recharger',
+//                 click : () => win.reload()
+//             },
+//             {
+//                 label : "debug",
+//                 click : () => win.webContents.openDevTools()
+//             }
+//         ]
+//     }
+// ])
+
+export const menu = Menu.buildFromTemplate([    
     {
-        label : 'Partie',
-        submenu : [
-            {
-                label : 'Recharger',
-                click : () => win.reload()
-            },
-            {
-                label : "debug",
-                click : () => win.webContents.openDevTools()
-            }
-        ]
+        label : 'Recharger',
+        click : () => win.reload()
+    },
+    {
+        label : "debug",
+        click : () => win.webContents.openDevTools()
     }
 ])
+

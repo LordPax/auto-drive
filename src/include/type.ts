@@ -41,3 +41,8 @@ export interface MapContent {
     gate:Gate[]
     text:MapText[]
 }
+
+export interface ModelContent {
+    weight:number[][][]
+    bias:number[][][]
+}
