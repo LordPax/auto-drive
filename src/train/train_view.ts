@@ -10,11 +10,11 @@ export class TrainView {
         this.model = train.getModel()
     }
 
-    public draw():void {
+    public draw(nbGate:number):void {
         const nbSim:number = this.model.getNbSim()
         const gen:number = this.model.getGen()
         const score:number = this.model.getScore(gen - 1)
 
-        console.log('train generation : ' + gen + ' / ' + nbSim + ' - score : ' + score)
+        console.log('train generation : ' + gen + ' / ' + nbSim + ' - score : ' + score + ' / ' + nbGate)
     }
 }

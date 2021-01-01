@@ -77,7 +77,7 @@ export class MapModel {
         fs.writeFileSync(file, data)
     }
 
-    public getWinner():Car { return this.cars.sort(compareCar)[0]}
+    public getWinner():Car[] { return this.cars.sort(compareCar)}
 
     public getNbCar():number { return this.nbCar }
 

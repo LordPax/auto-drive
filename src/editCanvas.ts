@@ -1,10 +1,11 @@
 import { config } from './include/config'
 import { Editor } from './editor/editor'
+require('dotenv').config()
 
 document.addEventListener('DOMContentLoaded', () => {
     let { ctx, width, height, canvas, ratio } = config()
-    // const editor:Editor = new Editor('save/map/test_map2.json', ctx)
-    const editor:Editor = new Editor('save/map/map_edit.json', ctx)
+    const MAP:string = process.env.MAP
+    const editor:Editor = new Editor(MAP, ctx)
 
     editor.event(document)
 

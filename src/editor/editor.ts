@@ -90,23 +90,7 @@ export class Editor {
     }
 
     public async eventAddText(mouseEvent:MouseEvent):Promise<void> {
-        // const text = await prompt('prompt de test')
-        // console.log(text)
-        // userPrompt('enter text : ', '', null).then((txt:string):void => {
-        //     const {clientX, clientY} = mouseEvent
-        //     if (txt.trim() !== '')
-        //         this.model.addText({x:clientX, y:clientY, txt})
-        // })
-        // vex.dialog.prompt({
-        //     message: 'What planet did the aliens come from?',
-        //     placeholder: 'Planet name',
-        //     callback: (value:any) => {
-        //         console.log(value)
-        //     }
-        // })
-        // dialogs.prompt('username', (ok:any) => {
-        //     console.log('prompt', ok)
-        // })
+        // TODO: peut-etre implementé un jour
     }
 
     public getMode():number { return this.mode}

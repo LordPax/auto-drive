@@ -35,6 +35,7 @@ export class MapViewNode implements View {
     private model:MapModel
 
     constructor(map:Map) {
+        this.map = map
         this.model = map.getModel()
     }
 

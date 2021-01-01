@@ -28,12 +28,13 @@ export class Map {
     }
 
     public mutateCar():ModelContent[] {
-        const winner:NeuralNetwork = this.model.getWinner().getModel().getBrain()
+        const winner:NeuralNetwork = this.model.getWinner()[0].getModel().getBrain()
+        // const winner:NeuralNetwork = this.model.getWinner().filter(net => ).map(net => net.getModel().getBrain())
         const weight:number[][][] = winner.saveWeight()
         const bias:number[][][] = winner.saveBias()
         const nb:number = this.model.getNbCar()
 
-        return this.repeteMutate(nb, winner, [{weight, bias}])
+        return this.repeteMutate(nb - 1, winner, [{weight, bias}])
     }
 
     public repeteMutate(nb:number, net:NeuralNetwork, mod:ModelContent[], acc:number = 0):ModelContent[] {
@@ -43,7 +44,7 @@ export class Map {
 
         const nouvMod = [...mod, {weight, bias}]
 
-        return acc < nb - 2 ? this.repeteMutate(nb, net, nouvMod, acc + 1) : nouvMod
+        return acc < nb - 1 ? this.repeteMutate(nb, net, nouvMod, acc + 1) : nouvMod
     }
 
     public isFinish():boolean {

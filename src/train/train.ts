@@ -15,7 +15,7 @@ export class Train {
         this.view = new TrainView(this)
     }
 
-    public calculate(mod1:ModelContent[] = [], acc:number = 0):void {
+    public calculate(mod1:string|ModelContent[] = [], acc:number = 0):void {
         const map:Map = new Map(this.model.getNbCar(), this.model.getFileMap(), mod1)
 
         map.setView(new MapViewNode(map))
@@ -25,8 +25,8 @@ export class Train {
             map.update()
         }
 
-        this.model.addScore(map.getModel().getWinner().getModel().getBrain().getReward())
-        this.view.draw()
+        this.model.addScore(map.getModel().getWinner()[0].getModel().getBrain().getReward())
+        this.view.draw(map.getModel().getAllGate().length)
 
         const mod2:ModelContent[] = map.mutateCar()
         

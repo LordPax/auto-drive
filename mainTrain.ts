@@ -1,6 +1,9 @@
-#!/usr/bin/node
-
 import { Train } from './src/train/train'
+require('dotenv').config()
 
-const train = new Train(500, 50, 'save/map/map_edit.json', 'save/model/model_test.json')
-train.calculate()
+const NBSIM:number = parseInt(process.env.NBSIM)
+const NBCAR:number = parseInt(process.env.NBCAR)
+const { MAP, MODELSAVE, MODELCHARGE } = process.env
+
+const train = new Train(NBSIM, NBCAR, MAP, MODELSAVE)
+train.calculate(MODELCHARGE)
