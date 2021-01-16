@@ -40,10 +40,6 @@ export const emptyModel:ModelContent[] = [{
     bias:[]
 }]
 
-export const prompt = (label:string):Promise<string> => new Promise((resolve, reject) => {
-    ipcRenderer.send('prompt', label)
-})
-
 export const distance = (ptsA:Point, ptsB:Point):number => {
     const vec:Point = {x:ptsA.x - ptsB.x, y:ptsA.y - ptsB.y}
     const dist:number = Math.sqrt(vec.x * vec.x + vec.y * vec.y)
@@ -85,4 +81,11 @@ export const compareCar = (a:Car, b:Car):number => {
     const rB:number = b.getModel().getBrain().getReward()
 
     return rB - rA
+}
+
+export const compareSensore = (a:Point, b:Point, coord:Point):number => {
+    const distA:number = distance(a, coord);
+    const distB:number = distance(b, coord);
+    
+    return distA - distB
 }

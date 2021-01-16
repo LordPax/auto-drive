@@ -33,8 +33,8 @@ export class Train {
         this.model.setGen(this.model.getGen() + 1)
 
         return acc < this.model.getNbSim() - 1
-            ? this.calculate(mod2, acc + 1)
-            : map.getModel().saveModel(this.model.getFileModel())
+        ? this.calculate(mod2, acc + 1)
+        : map.getModel().saveModel(this.model.getFileModel())
     }
 
     public getModel():TrainModel { return this.model }

@@ -4,7 +4,7 @@ import { Map } from '../map/map'
 import { MapModel } from '../map/map_model'
 import { View, Wall, Point, Vector, Line, Sensor, Gate } from '../include/type'
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
-import { distance, intersec, getCollide, sensorCollidePoint } from '../include/utils'
+import { distance, intersec, getCollide, sensorCollidePoint, compareSensore } from '../include/utils'
 
 export class Car {
     private model:CarModel
@@ -15,7 +15,7 @@ export class Car {
         this.model = new CarModel(x, y, weight, bias)
     }
 
-    public update(wall:Wall[], gate:Gate[]):void {
+    public update(wall:Wall[], gate:Gate[], cam:Point):void {
         const coord:Point = this.model.getCoord()
         const size:Point = this.model.getSize()
         const vel:Point = this.model.getVelocity()
@@ -46,18 +46,17 @@ export class Car {
         .map(pts => pts !== null ? pts : {x:coord.x, y:coord.y})
         .map(pts => [distance(pts, coord)])
 
-        const res:number[][] = brain.calculate(dist, Tanh, Heaviside)
+        this.move(brain.calculate(dist, Tanh, Heaviside))
+    }
 
-        if (res[0][0] === 1)
+    public move(move:number[][]):void {
+        if (move[0][0] === 1)
             this.forward()
-
-        if (res[1][0] === 1)
+        if (move[1][0] === 1)
             this.backward()
-
-        if (res[2][0] === 1)
+        if (move[2][0] === 1)
             this.turnRight()
-
-        if (res[3][0] === 1)
+        if (move[3][0] === 1)
             this.turnLeft()
     }
 
@@ -84,12 +83,7 @@ export class Car {
             const coli:Point[] = wall
             .map(w => sensorCollidePoint(s, w))
             .filter(col => col !== null)
-            .sort((a:Point, b:Point) => {
-                const distA:number = distance(a, coord);
-                const distB:number = distance(b, coord);
-                
-                return distA - distB
-            })
+            .sort((a:Point, b:Point) => compareSensore(a, b, coord))
 
             return coli.length > 0 ? coli[0] : null
         })

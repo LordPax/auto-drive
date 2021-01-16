@@ -1,25 +1,27 @@
 import { Car } from '../car/car'
 import { MapViewElectron } from './map_view'
 import { MapModel } from './map_model'
-import { View, Wall, Gate, ModelContent } from '../include/type'
+import { View, Wall, Gate, ModelContent, Point } from '../include/type'
+import { match } from '../include/utils'
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
 
 export class Map {
     private model:MapModel
     private view:View
-
+    
     constructor(nbCar:number, fileMap:string, fileModel:string|ModelContent[] = '') {
-        this.model = new MapModel(nbCar, fileMap, fileModel)
+        this.model = new MapModel(nbCar, fileMap, fileModel)    
     }
 
     public update():void {
         const wall:Wall[] = this.model.getAllWall()
         const gate:Gate[] = this.model.getAllGate()
+        const cam:Point = this.model.getCam()
         const date:Date = new Date()
         
         this.model.getAllCars().forEach(car => {
             if (!car.collision(wall))
-                car.update(wall, gate)
+                car.update(wall, gate, cam)
             else
                 car.getModel().setVelocity(0)
         })
@@ -27,15 +29,43 @@ export class Map {
         MapModel.timeGate = date.getTime()
     }
 
+    public event(doc:Document):void {
+        doc.addEventListener('keydown', event => {
+            const {x, y} = this.model.getCam()
+            this.model.setCam(
+                match(event.keyCode)
+                .case(37, () => ({x:x-10, y})) // left
+                .case(38, () => ({x, y:y-10})) // up
+                .case(39, () => ({x:x+10, y})) // right
+                .case(40, () => ({x, y:y+10})) // down
+                .default(() => ({x, y}))
+            )
+
+            console.log(this.model.getCam())
+        })
+    }
+
     public mutateCar():ModelContent[] {
         const winner:NeuralNetwork = this.model.getWinner()[0].getModel().getBrain()
-        // const winner:NeuralNetwork = this.model.getWinner().filter(net => ).map(net => net.getModel().getBrain())
+        const modelWinner:ModelContent[] = this.model.getLastWinner()
+        .map(car => car.getModel().getBrain())
+        .map(net => ({weight:net.saveWeight(), bias:net.saveBias()}))
+
+        const nb:number = this.model.getNbCar()
+        const nbWinner:number = modelWinner.length
+
+        return this.repeteMutate(nb - nbWinner, winner, modelWinner)
+    }
+
+    /*public mutateCar():ModelContent[] {
+        const winner:NeuralNetwork = this.model.getWinner()[0].getModel().getBrain()
+        
         const weight:number[][][] = winner.saveWeight()
         const bias:number[][][] = winner.saveBias()
         const nb:number = this.model.getNbCar()
 
         return this.repeteMutate(nb - 1, winner, [{weight, bias}])
-    }
+    }*/
 
     public repeteMutate(nb:number, net:NeuralNetwork, mod:ModelContent[], acc:number = 0):ModelContent[] {
         const otherNet:NeuralNetwork = net.cloneMutate()
@@ -47,9 +77,7 @@ export class Map {
         return acc < nb - 1 ? this.repeteMutate(nb, net, nouvMod, acc + 1) : nouvMod
     }
 
-    public isFinish():boolean {
-        return MapModel.timeGate >= MapModel.timeComp
-    }
+    public isFinish():boolean { return MapModel.timeGate >= MapModel.timeComp }
 
     public draw():void {
         this.view.draw()

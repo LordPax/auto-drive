@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
 import { EditorView } from './editor_view'
 import { EditorModel } from './editor_model'
-import { match, prompt } from '../include/utils'
+import { match } from '../include/utils'
 import { Wall, Point, MapText } from '../include/type'
 
 export class Editor {
