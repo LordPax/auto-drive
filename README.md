@@ -47,8 +47,8 @@ NBCAR=nombre de viéhicules l'ors d'une simulation
 ### exemple
 ```
 MAP=save/map/map_S1.json
-MODELSAVE=save/model/model_map_S1.json
-MODELCHARGE=''
+MODELSAVE=save/model/model_S1_100gen.json
+MODELCHARGE=
 NBSIM=500
 NBCAR=100
 ```

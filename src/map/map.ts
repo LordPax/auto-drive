@@ -57,16 +57,6 @@ export class Map {
         return this.repeteMutate(nb - nbWinner, winner, modelWinner)
     }
 
-    /*public mutateCar():ModelContent[] {
-        const winner:NeuralNetwork = this.model.getWinner()[0].getModel().getBrain()
-        
-        const weight:number[][][] = winner.saveWeight()
-        const bias:number[][][] = winner.saveBias()
-        const nb:number = this.model.getNbCar()
-
-        return this.repeteMutate(nb - 1, winner, [{weight, bias}])
-    }*/
-
     public repeteMutate(nb:number, net:NeuralNetwork, mod:ModelContent[], acc:number = 0):ModelContent[] {
         const otherNet:NeuralNetwork = net.cloneMutate()
         const weight:number[][][] = otherNet.saveWeight()

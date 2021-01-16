@@ -5,13 +5,13 @@ export let win:BrowserWindow
 export let child:BrowserWindow
 export let promptAnswer:any
 
-export const showWindow = () => {
+export const showWindow = (script:string) => {
     win = new BrowserWindow({
         width : 800,
         height : 600,
         resizable : true,
         webPreferences : {
-            preload : path.join(__dirname, "../showCanvas.js"),
+            preload : path.join(__dirname, script),
             nodeIntegration : true
         }
     })
@@ -23,47 +23,9 @@ export const showWindow = () => {
     })
 
     app.on('activate', () => {
-        if (win === null) showWindow()
+        if (win === null) showWindow(script)
     })
 }
-
-export const editWindow = () => {
-    win = new BrowserWindow({
-        width : 800,
-        height : 600,
-        resizable : true,
-        webPreferences : {
-            preload : path.join(__dirname, "../editCanvas.js"),
-            nodeIntegration : false
-        }
-    })
-
-    win.loadFile(path.join(__dirname, "../../../view/index.html"))
-
-    app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') app.quit()
-    })
-
-    app.on('activate', () => {
-        if (win === null) editWindow()
-    })
-}
-
-// export const menu = Menu.buildFromTemplate([
-//     {
-//         label : 'Partie',
-//         submenu : [
-//             {
-//                 label : 'Recharger',
-//                 click : () => win.reload()
-//             },
-//             {
-//                 label : "debug",
-//                 click : () => win.webContents.openDevTools()
-//             }
-//         ]
-//     }
-// ])
 
 export const menu = Menu.buildFromTemplate([    
     {
