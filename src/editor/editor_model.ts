@@ -8,6 +8,7 @@ export class EditorModel {
     private gate:Gate[]
     private name:string
     private text:MapText[]
+    public static cam:Point
 
     constructor(file:string) {
         this.name = file
@@ -16,6 +17,7 @@ export class EditorModel {
         this.gate = []
         this.text = []
         this.loadMap(file)
+        EditorModel.cam = {x:0, y:0}
     }
 
     public loadMap(file:string):void {

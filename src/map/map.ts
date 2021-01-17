@@ -16,12 +16,11 @@ export class Map {
     public update():void {
         const wall:Wall[] = this.model.getAllWall()
         const gate:Gate[] = this.model.getAllGate()
-        const cam:Point = this.model.getCam()
         const date:Date = new Date()
         
         this.model.getAllCars().forEach(car => {
             if (!car.collision(wall))
-                car.update(wall, gate, cam)
+                car.update(wall, gate)
             else
                 car.getModel().setVelocity(0)
         })
@@ -31,17 +30,14 @@ export class Map {
 
     public event(doc:Document):void {
         doc.addEventListener('keydown', event => {
-            const {x, y} = this.model.getCam()
-            this.model.setCam(
-                match(event.keyCode)
-                .case(37, () => ({x:x-10, y})) // left
-                .case(38, () => ({x, y:y-10})) // up
-                .case(39, () => ({x:x+10, y})) // right
-                .case(40, () => ({x, y:y+10})) // down
-                .default(() => ({x, y}))
-            )
-
-            console.log(this.model.getCam())
+            const {x, y} = MapModel.cam
+            const v:number = 20
+            MapModel.cam = match(event.keyCode)
+            .case(37, () => ({x:x + v, y})) // left
+            .case(38, () => ({x, y:y + v})) // up
+            .case(39, () => ({x:x - v, y})) // right
+            .case(40, () => ({x, y:y - v})) // down
+            .default(() => ({x, y}))
         })
     }
 

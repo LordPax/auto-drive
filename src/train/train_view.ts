@@ -15,6 +15,6 @@ export class TrainView {
         const gen:number = this.model.getGen()
         const score:number = this.model.getScore(gen - 1)
 
-        console.log('train generation : ' + gen + ' / ' + nbSim + ' - score : ' + score + ' / ' + nbGate)
+        console.log('train generation : ' + gen + ' / ' + nbSim + ' - winner\'s score : ' + score + ' / ' + nbGate)
     }
 }

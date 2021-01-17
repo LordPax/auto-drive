@@ -17,19 +17,20 @@ export class EditorView extends Drawable {
         const spawn:Point = this.model.getSpawn()
         const wall:Wall[] = this.model.getAllWall()
         const gate:Gate[] = this.model.getAllGate()
-        const text:MapText[] = this.model.getAllText()
+        // const text:MapText[] = this.model.getAllText()
         const mode:number = this.editor.getMode()
+        const {cam} = EditorModel
 
         wall.forEach(elem => 
-            this.drawLine(elem.x, elem.y, elem.toX, elem.toY, '#000000')
+            this.drawLine(elem.x + cam.x, elem.y + cam.y, elem.toX + cam.x, elem.toY + cam.y, '#000000')
         )
         gate.forEach(elem => 
-            this.drawLine(elem.x, elem.y, elem.toX, elem.toY, '#00ff00')
+            this.drawLine(elem.x + cam.x, elem.y + cam.y, elem.toX + cam.x, elem.toY + cam.y, '#00ff00')
         )
-        text.forEach(elem => 
-            this.drawText(elem.x, elem.y, elem.txt, '#000000', 15)
-        )
-        this.drawCircle(spawn.x, spawn.y, 5, '#00ff00')
+        // text.forEach(elem => 
+        //     this.drawText(elem.x, elem.y, elem.txt, '#000000', 15)
+        // )
+        this.drawCircle(spawn.x + cam.x, spawn.y + cam.y, 5, '#00ff00')
 
         if (mode === 1) this.drawMode(50, 50, 'insertion de mure')
         else if (mode === 2) this.drawHelp(50, 50)

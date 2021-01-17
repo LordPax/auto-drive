@@ -15,7 +15,7 @@ export class Car {
         this.model = new CarModel(x, y, weight, bias)
     }
 
-    public update(wall:Wall[], gate:Gate[], cam:Point):void {
+    public update(wall:Wall[], gate:Gate[]):void {
         const coord:Point = this.model.getCoord()
         const size:Point = this.model.getSize()
         const vel:Point = this.model.getVelocity()

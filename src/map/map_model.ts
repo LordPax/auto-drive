@@ -13,7 +13,8 @@ export class MapModel {
     public static timeGate:number // temps en miliseconds entre chaque gate
     public static timeComp:number
     public static timeMax:number = 3000
-    private cam:Point
+    public static cam:Point
+    public static zoom:number = 0
 
     constructor(nbCar:number, fileMap:string, fileModel:string|ModelContent[]) {
         this.nbCar = nbCar
@@ -26,7 +27,7 @@ export class MapModel {
         MapModel.timeGate = time
         MapModel.timeComp = time + MapModel.timeMax
         this.initAll(nbCar, fileMap, fileModel)
-        this.cam = {x:0, y:0}
+        MapModel.cam = {x:0, y:0}
     }
 
     public initCars(nb:number, spawn:Point, model:ModelContent[], acc:number = 0):void {
@@ -92,13 +93,12 @@ export class MapModel {
 
     public getWall(i:number):Wall { return this.wall[i] }
     public getAllWall():Wall[] { return this.wall }
+    public setAllWall(wall:Wall[]):void { this.wall = wall }
 
     public getGate(i:number):Gate { return this.gate[i] }
     public getAllGate():Gate[] { return this.gate }
+    public setAllGate(gate:Gate[]):void { this.gate = gate }
 
     public getText(i:number):MapText { return this.text[i] }
     public getAllText():MapText[] { return this.text }
-
-    public getCam():Point { return this.cam }
-    public setCam(cam:Point):void { this.cam = cam }
 }

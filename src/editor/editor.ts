@@ -40,7 +40,7 @@ export class Editor {
             .case('e', () => 4) // e : mode add gate
             .case('s', () => 5) // s : mode save map
             .case('r', () => 6) // r : mode add text (soon)
-            .default(() => 0)
+            .default(() => this.mode)
             
             if (this.mode !== 1) this.ptsW = null
         })
@@ -55,14 +55,26 @@ export class Editor {
                 this.eventAddText(mouseEvent)
             }
         })
+        doc.addEventListener('keydown', event => {
+            const {x, y} = EditorModel.cam
+            const v:number = 20
+            EditorModel.cam = match(event.keyCode)
+            .case(37, () => ({x:x + v, y})) // left
+            .case(38, () => ({x, y:y + v})) // up
+            .case(39, () => ({x:x - v, y})) // right
+            .case(40, () => ({x, y:y - v})) // down
+            .default(() => ({x, y}))
+            
+        })
     }
 
     public eventAddWall(mouseEvent:MouseEvent):void {
         const {clientX, clientY} = mouseEvent
         const pts:Point = {x:clientX, y:clientY}
+        const {cam} = EditorModel
 
         if (this.ptsW !== null)
-            this.model.addWall({x:this.ptsW.x, y:this.ptsW.y, toX:pts.x, toY:pts.y})
+            this.model.addWall({x:this.ptsW.x - cam.x, y:this.ptsW.y - cam.y, toX:pts.x - cam.x, toY:pts.y - cam.y})
 
         this.ptsW = pts
     }
@@ -70,9 +82,10 @@ export class Editor {
     public eventAddGate(mouseEvent:MouseEvent):void {
         const {clientX, clientY} = mouseEvent
         const pts:Point = {x:clientX, y:clientY}
+        const {cam} = EditorModel
 
         if (this.ptsG !== null) {
-            this.model.addGate({x:this.ptsG.x, y:this.ptsG.y, toX:pts.x, toY:pts.y})
+            this.model.addGate({x:this.ptsG.x - cam.x, y:this.ptsG.y - cam.y, toX:pts.x - cam.x, toY:pts.y - cam.y})
             this.ptsG = null
         }
         else
@@ -81,7 +94,8 @@ export class Editor {
 
     public eventChangeSpawn(mouseEvent:MouseEvent):void {
         const {clientX, clientY} = mouseEvent
-        this.model.setSpawn({x:clientX, y:clientY})
+        const {cam} = EditorModel
+        this.model.setSpawn({x:clientX - cam.x, y:clientY - cam.y})
     }
 
     public eventSave():void {

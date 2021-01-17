@@ -25,7 +25,6 @@ export class CarModel {
         this.sensor = []
         this.ptsSensor = []
         this.gatePassed = []
-        // this.setAngle(-110)
         this.setAngle(-90)
         this.initSensor(5)
     }
