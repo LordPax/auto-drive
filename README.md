@@ -52,3 +52,19 @@ MODELCHARGE=
 NBSIM=500
 NBCAR=100
 ```
+
+## Exemple en image
+### 100 véhicule 0 génération
+![100 car 0 gen](https://raw.githubusercontent.com/LordPax/auto-drive/master/example/100car_0gen.gif)
+
+### 100 véhicule 10 génération
+![100 car 10 gen](https://raw.githubusercontent.com/LordPax/auto-drive/master/example/100car_10gen.gif)
+
+### 100 véhicule 50 génération
+![100 car 50 gen](https://raw.githubusercontent.com/LordPax/auto-drive/master/example/100car_50gen.gif)
+
+### 100 véhicule 100 génération
+![100 car 100 gen](https://raw.githubusercontent.com/LordPax/auto-drive/master/example/100car_100gen.gif)
+
+### 1 véhicule 100 génération
+![1 car 100 gen](https://raw.githubusercontent.com/LordPax/auto-drive/master/example/1car_100gen.gif)
