@@ -2,7 +2,7 @@ import { Car } from '../car/car'
 import { MapViewElectron } from './map_view'
 import { MapModel } from './map_model'
 import { View, Wall, Gate, ModelContent, Point } from '../include/type'
-import { match } from '../include/utils'
+import { match } from 'lib-perso'
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
 
 export class Map {
@@ -31,13 +31,21 @@ export class Map {
     public event(doc:Document):void {
         doc.addEventListener('keydown', event => {
             const {x, y} = MapModel.cam
+            const zoom = MapModel.zoom
             const v:number = 20
+            const mul = 0.1
+
             MapModel.cam = match(event.keyCode)
             .case(37, () => ({x:x + v, y})) // left
             .case(38, () => ({x, y:y + v})) // up
             .case(39, () => ({x:x - v, y})) // right
             .case(40, () => ({x, y:y - v})) // down
             .default(() => ({x, y}))
+
+            MapModel.zoom = match(event.keyCode)
+            .case(107, () => zoom + mul) // zoom in (+)
+            .case(109, () => zoom - mul) // zoom out (-)
+            .default(() => zoom)
         })
     }
 

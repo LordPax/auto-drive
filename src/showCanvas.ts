@@ -1,11 +1,8 @@
-import { ipcRenderer } from 'electron'
 import { config } from './include/config'
 import { Map } from './map/map'
 import { MapViewElectron } from './map/map_view'
 import { CarViewElectron } from './car/car_view'
 import { MapModel } from './map/map_model'
-import { Point } from './include/type'
-import { match } from './include/utils'
 require('dotenv').config()
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,7 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     const draw = ():void => {
+        const cam = MapModel.cam
+        const zoom = MapModel.zoom
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
         ctx.clearRect(0, 0, width, height)
+        ctx.scale(ratio * zoom, ratio * zoom)
         map.draw()
     }
     const update = ():void => {

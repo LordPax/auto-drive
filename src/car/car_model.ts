@@ -1,5 +1,5 @@
 import { NeuralNetwork, ReLu, Sig, Tanh, Heaviside } from 'billy-brain'
-import { roundNumber } from '../include/utils'
+import { roundNumber } from 'lib-perso'
 import { Point, Sensor, Gate } from '../include/type'
 
 export class CarModel {

@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
 import { EditorView } from './editor_view'
 import { EditorModel } from './editor_model'
-import { match } from '../include/utils'
+import { match } from 'lib-perso'
 import { Wall, Point, MapText } from '../include/type'
 
 export class Editor {
@@ -57,7 +57,10 @@ export class Editor {
         })
         doc.addEventListener('keydown', event => {
             const {x, y} = EditorModel.cam
+            const zoom = EditorModel.zoom
             const v:number = 20
+            const mul = 0.1
+            
             EditorModel.cam = match(event.keyCode)
             .case(37, () => ({x:x + v, y})) // left
             .case(38, () => ({x, y:y + v})) // up
@@ -65,6 +68,10 @@ export class Editor {
             .case(40, () => ({x, y:y - v})) // down
             .default(() => ({x, y}))
             
+            EditorModel.zoom = match(event.keyCode)
+            .case(107, () => zoom + mul) // zoom in (+)
+            .case(109, () => zoom - mul) // zoom out (-)
+            .default(() => zoom)
         })
     }
 

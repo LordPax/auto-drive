@@ -17,15 +17,17 @@
         "start:editor": "electron build/main.js editor",
         "start:train": "node build/mainTrain.js",
         "build": "./compileTs.sh",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "tags": "ctags -R --exclude=node_modules --exclude=.git --exclude=build ."
     },
     "dependencies": {
-        "@types/node": "^14.14.9",
-        "billy-brain": "^1.2.3",
+        "@types/node": "^14.14.31",
+        "billy-brain": "^1.2.4",
         "dotenv": "^8.2.0",
-        "electron": "^10.1.6",
+        "electron": "^10.4.0",
+        "lib-perso": "^2.0.0",
         "path": "^0.12.7",
-        "typescript": "^4.1.2"
+        "typescript": "^4.2.2"
     },
     "author": "lordpax",
     "license": "ISC",

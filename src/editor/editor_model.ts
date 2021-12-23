@@ -9,6 +9,7 @@ export class EditorModel {
     private name:string
     private text:MapText[]
     public static cam:Point
+    public static zoom:number
 
     constructor(file:string) {
         this.name = file
@@ -18,6 +19,7 @@ export class EditorModel {
         this.text = []
         this.loadMap(file)
         EditorModel.cam = {x:0, y:0}
+        EditorModel.zoom = 1
     }
 
     public loadMap(file:string):void {

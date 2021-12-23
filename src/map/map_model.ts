@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron'
-import { roundNumber, emptyMap, compareCar, emptyModel } from '../include/utils'
+import { emptyMap, compareCar, emptyModel } from '../include/utils'
+import { roundNumber } from 'lib-perso'
 import { Wall, Point, MapContent, Gate, MapText, ModelContent } from '../include/type'
 import { Car } from '../car/car'
 import * as fs from 'fs'
@@ -14,7 +15,7 @@ export class MapModel {
     public static timeComp:number
     public static timeMax:number = 3000
     public static cam:Point
-    public static zoom:number = 0
+    public static zoom:number
 
     constructor(nbCar:number, fileMap:string, fileModel:string|ModelContent[]) {
         this.nbCar = nbCar
@@ -28,6 +29,7 @@ export class MapModel {
         MapModel.timeComp = time + MapModel.timeMax
         this.initAll(nbCar, fileMap, fileModel)
         MapModel.cam = {x:0, y:0}
+        MapModel.zoom = 1
     }
 
     public initCars(nb:number, spawn:Point, model:ModelContent[], acc:number = 0):void {
